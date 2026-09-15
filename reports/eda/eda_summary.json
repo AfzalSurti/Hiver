@@ -1,0 +1,146 @@
+{
+  "n_rows": 2811774,
+  "n_unique_authors": 702777,
+  "n_inbound_customer_msgs": 1537843,
+  "n_outbound_brand_msgs": 1273931,
+  "missing_values": {
+    "tweet_id": 0,
+    "author_id": 0,
+    "inbound": 0,
+    "created_at": 0,
+    "text": 0,
+    "response_tweet_id": 1040629,
+    "in_response_to_tweet_id": 794335
+  },
+  "duplicate_text_rows": 29156,
+  "date_range": [
+    "2008-05-08 20:13:59+00:00",
+    "2017-12-03 23:14:01+00:00"
+  ],
+  "top_brands_by_agent_messages": {
+    "AmazonHelp": 169840,
+    "AppleSupport": 106860,
+    "Uber_Support": 56270,
+    "SpotifyCares": 43265,
+    "Delta": 42253,
+    "Tesco": 38573,
+    "AmericanAir": 36764,
+    "TMobileHelp": 34317,
+    "comcastcares": 33031,
+    "British_Airways": 29361,
+    "SouthwestAir": 28977,
+    "VirginTrains": 27817,
+    "Ask_Spectrum": 25860,
+    "XboxSupport": 24557,
+    "sprintcare": 22381,
+    "hulu_support": 21872,
+    "sainsburys": 19466,
+    "GWRHelp": 19364,
+    "AskPlayStation": 19098,
+    "ChipotleTweets": 18749,
+    "VerizonSupport": 17966,
+    "UPSHelp": 17817,
+    "ATVIAssist": 17650,
+    "O2": 16212,
+    "Safaricom_Care": 16077
+  },
+  "top_brands_by_customer_replies_to_them": {
+    "AmazonHelp": 100503,
+    "AppleSupport": 36658,
+    "Uber_Support": 22160,
+    "VirginTrains": 18450,
+    "AmericanAir": 18045,
+    "SpotifyCares": 15096,
+    "Delta": 14470,
+    "GWRHelp": 13127,
+    "ATVIAssist": 13055,
+    "VerizonSupport": 12953,
+    "Tesco": 12812,
+    "British_Airways": 12485,
+    "XboxSupport": 11833,
+    "TMobileHelp": 11662,
+    "SouthwestAir": 11192,
+    "AskPlayStation": 9751,
+    "Ask_Spectrum": 9536,
+    "sainsburys": 9331,
+    "hulu_support": 9142,
+    "comcastcares": 8906,
+    "sprintcare": 8894,
+    "idea_cares": 8730,
+    "O2": 8508,
+    "SW_Help": 7977,
+    "Safaricom_Care": 7674
+  },
+  "text_length_stats": {
+    "customer": {
+      "count": 1537843.0,
+      "mean": 109.93614757813378,
+      "std": 57.16448657487967,
+      "min": 1.0,
+      "25%": 67.0,
+      "50%": 109.0,
+      "75%": 140.0,
+      "max": 513.0
+    },
+    "brand": {
+      "count": 1273931.0,
+      "mean": 118.66230039146548,
+      "std": 45.402433027937164,
+      "min": 6.0,
+      "25%": 91.0,
+      "50%": 120.0,
+      "75%": 139.0,
+      "max": 343.0
+    }
+  },
+  "candidate_conversation_stats": {
+    "AmazonHelp": {
+      "n_root_conversations_sampled": 20000,
+      "pct_with_brand_reply": 0.996,
+      "avg_chain_length": 3.87,
+      "max_chain_length": 21
+    },
+    "AmericanAir": {
+      "n_root_conversations_sampled": 20000,
+      "pct_with_brand_reply": 0.983,
+      "avg_chain_length": 2.95,
+      "max_chain_length": 21
+    },
+    "AppleSupport": {
+      "n_root_conversations_sampled": 20000,
+      "pct_with_brand_reply": 0.993,
+      "avg_chain_length": 3.04,
+      "max_chain_length": 21
+    },
+    "British_Airways": {
+      "n_root_conversations_sampled": 16222,
+      "pct_with_brand_reply": 0.99,
+      "avg_chain_length": 2.9,
+      "max_chain_length": 21
+    },
+    "Delta": {
+      "n_root_conversations_sampled": 20000,
+      "pct_with_brand_reply": 0.973,
+      "avg_chain_length": 2.76,
+      "max_chain_length": 21
+    },
+    "SouthwestAir": {
+      "n_root_conversations_sampled": 20000,
+      "pct_with_brand_reply": 0.98,
+      "avg_chain_length": 2.64,
+      "max_chain_length": 21
+    },
+    "SpotifyCares": {
+      "n_root_conversations_sampled": 13476,
+      "pct_with_brand_reply": 0.998,
+      "avg_chain_length": 2.93,
+      "max_chain_length": 19
+    },
+    "TMobileHelp": {
+      "n_root_conversations_sampled": 7823,
+      "pct_with_brand_reply": 0.995,
+      "avg_chain_length": 2.53,
+      "max_chain_length": 19
+    }
+  }
+}

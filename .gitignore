@@ -1,0 +1,52 @@
+# Environment / secrets
+.env
+.env.local
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Data (raw dataset is large and not ours to redistribute; processed/cache artifacts are regenerable)
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+!data/processed/README.md
+data/cache/
+
+# Golden set is small and IS committed (it's a deliverable) - do not ignore data/golden/
+
+# Embeddings / vector index caches (regenerable, can be large)
+*.faiss
+*.index
+data/embeddings/
+
+# LLM call caches (regenerable, may contain API responses)
+data/llm_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Reports that are generated, not authored (keep authored .md, ignore generated plots if large)
+reports/figures/*.png
+!reports/figures/.gitkeep
