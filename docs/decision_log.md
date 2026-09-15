@@ -231,3 +231,32 @@ are set from reasoning about the problem and the TF-IDF similarity scale,
 not fit to data, since the real classifier's confidence distribution isn't
 known until Phase 7 runs against a live LLM. They are explicitly flagged in
 the module docstring as pending calibration, not claimed as optimal.
+
+---
+
+### 11. LLM calls distinguish "missing configuration" from "bad model output" - only the latter gets a safe fallback
+
+**Decision:** `classify()` and `generate_reply()` catch model-output
+failures (invalid JSON, failed validation after retries) and return a safe
+fallback value, but explicitly re-raise `LLMConfigError` (e.g. a missing
+`OPENROUTER_API_KEY`) rather than swallowing it into the same fallback path.
+
+**Why:** This is a bug found and fixed during development, not a
+design decision made up front - worth recording because of what it reveals.
+The first version caught every exception uniformly. Running
+`scripts/10_run_classifier_eval.py` with no API key configured "succeeded"
+silently: every example fell back to `OTHER_AMBIGUOUS`/confidence 0.0, and
+the script wrote a complete-looking `ai_classifier.json` with real-looking
+(if poor) accuracy/F1 numbers - a result file indistinguishable from a
+genuine but bad classifier run, produced entirely by a setup error. That is
+exactly the kind of fabricated result the project's own ground rules
+prohibit, and it would have been easy to not notice until writing up
+results that don't reproduce. The fix separates two genuinely different
+failure classes: a model occasionally returning malformed JSON is a
+per-example robustness issue worth falling back gracefully on; missing
+credentials is a setup problem that should stop the whole run immediately
+and say so.
+
+**Trade-off:** None really - this is strictly safer. It's recorded here as
+a reminder that "add a fallback for robustness" needs a second look at
+*which* exceptions the fallback actually covers.
