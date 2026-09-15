@@ -260,3 +260,75 @@ and say so.
 **Trade-off:** None really - this is strictly safer. It's recorded here as
 a reminder that "add a fallback for robustness" needs a second look at
 *which* exceptions the fallback actually covers.
+
+---
+
+### 12. ESCALATE decisions get a templated hand-off message, never an LLM-generated one
+
+**Decision:** `scripts/11_run_full_pipeline.py` only calls
+`generate_reply()` when the escalation policy says `AUTO_HANDLE`. For
+`ESCALATE`, the reply is a fixed template string, not a model call.
+
+**Why:** There is no upside to asking a generator to draft a
+resolution-shaped reply for a case the system has already decided a human
+needs to handle - at best it's wasted API spend, at worst it produces a
+plausible-sounding reply that could get sent instead of actually routing to
+a human, undermining the whole point of escalating. Templating the
+hand-off message removes any hallucination surface area on exactly the
+subset of traffic already flagged as highest-risk.
+
+**Trade-off:** The template is generic and doesn't reference the specific
+issue, which is slightly less polished than a tailored "we're looking into
+your duplicate charge" message would be - judged an acceptable cost for
+zero hallucination risk on the highest-stakes cases.
+
+---
+
+### 13. The LLM judge uses a different model than generation, and is validated without seeing its own kind of self-bias
+
+**Decision:** `.env.example` defaults `OPENROUTER_GENERATION_MODEL` to an
+OpenAI model and `OPENROUTER_JUDGE_MODEL` to an Anthropic model.
+Additionally, `scripts/13_sample_human_review.py` deliberately withholds
+the judge's own scores from the file a human rater fills in.
+
+**Why:** Two distinct self-bias risks, two distinct mitigations. First,
+models are known to rate their own outputs more favorably than a different
+model's outputs ("self-preference bias" in LLM-as-judge literature) - using
+a different provider/model for judging is a cheap, standard mitigation.
+Second, a human rater who can see "the judge already said 4/5" while
+scoring the same reply will anchor toward that number even when trying not
+to, which would inflate the measured judge-human agreement and defeat the
+point of running the study at all.
+
+**Trade-off:** Using two different models means the judge's rubric
+interpretation might genuinely differ from how the generation model would
+"grade itself," which is exactly the point, but also means judge scores
+reflect one specific model's rubric interpretation, not some
+model-agnostic ground truth - a third model might score differently again.
+
+---
+
+### 14. Escalation reason categories are a fixed, validated 6-item enum, not free text
+
+**Decision:** `escalation_reason` in both the golden set
+(`scripts/06_build_golden_set.py`) and the runtime policy
+(`src/support_agent/escalation.py`) is constrained to exactly six values
+(`SENSITIVE_FINANCIAL`, `ACCOUNT_SPECIFIC_INVESTIGATION`,
+`SECURITY_CONCERN`, `AMBIGUOUS_OR_INSUFFICIENT_INFO`,
+`REPEATED_UNRESOLVED_ISSUE`, `OUT_OF_SCOPE`), enforced at golden-set build
+time (`scripts/06` raises on anything else).
+
+**Why:** Free-text escalation reasons would be more expressive per-example
+but impossible to aggregate into "what fraction of escalations are
+financial vs. security vs. ambiguous" - a breakdown this project relies on
+for the results section and for judging whether the automated policy's
+*reasons* (not just its accept/reject decisions) look like a human's
+reasons. A fixed enum, chosen from the assignment's own example categories
+and refined against what actually showed up in the golden-set annotation
+pass, keeps every downstream analysis a simple groupby.
+
+**Trade-off:** A handful of golden examples had reasoning that didn't
+cleanly fit one bucket (e.g., `spotify_1997120`: financial dispute AND 3
+prior unresolved contact attempts) and had to be force-fit to the single
+most actionable category, with the secondary consideration left in the
+free-text `notes` field instead of a structured field.
