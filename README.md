@@ -12,8 +12,6 @@ methodology, baselines, results, failure analysis, and limitations.
 
 ## Status
 
-This repository is under active development. Current state:
-
 - [x] Repo scaffolding, `.env.example`, `.gitignore`
 - [x] Dataset acquired (`data/raw/twcs.csv`, gitignored — see below)
 - [x] Data exploration (`reports/eda/`) and brand selection
@@ -22,10 +20,16 @@ This repository is under active development. Current state:
 - [x] Trivial + TF-IDF baselines (`reports/eval/baseline_*.json`)
 - [x] Local TF-IDF retrieval index (`src/support_agent/retrieval.py`)
 - [x] Escalation policy, fully rule-based and tested (`src/support_agent/escalation.py`)
+- [x] Escalation policy evaluation harness (`reports/eval/escalation_tfidf.json`, no API key needed)
+- [x] Failure analysis, misleading-headline-number, one-more-week, decision log (`docs/`)
+- [x] `REPORT.md`, `docs/interview_notes.md`
+- [x] 32 passing tests (`tests/`)
 - [ ] LLM intent classifier — code complete, **pending an OpenRouter API key to run** (see below)
 - [ ] Retrieval-grounded reply generation — code complete, pending API key
 - [ ] LLM-as-judge + human agreement study — code complete, pending API key
-- [ ] Final evaluation, failure analysis, REPORT.md
+
+See `REPORT.md` for the full write-up and `README`'s reproduction sections
+below for exact commands.
 
 ## Getting the dataset
 
@@ -62,20 +66,26 @@ policy runs with **no API key at all**. An OpenRouter key
 grounded reply generation, and LLM-as-judge steps (scripts 10-14). Put it in
 `.env` as `OPENROUTER_API_KEY=sk-or-...` — never commit this file.
 
-## Reproducing results (no API key required) — ~5 minutes
+## Reproducing results (no API key required) — ~10 minutes, measured end-to-end
+
+Most of this time is loading the 515MB/2.8M-row raw CSV twice (scripts 01
+and 03 each do a full pass over it); everything after that is fast.
 
 ```bash
-python scripts/01_explore_data.py           # ~30-60s — EDA over the full raw dataset
+python scripts/01_explore_data.py           # ~2-3 min — EDA over the full raw dataset
 python scripts/02_select_brand.py           # instant — records the brand-selection decision
-python scripts/03_build_conversations.py    # ~1-2 min — builds the conversation dataset + train/eval split
+python scripts/03_build_conversations.py    # ~3-4 min — builds the conversation dataset + train/eval split
 python scripts/04_weak_label_train.py       # ~10s — heuristic labels for the TF-IDF baseline
 python scripts/05_sample_golden_candidates.py  # instant — resamples golden-set candidates (already labelled in data/golden/)
 python scripts/06_build_golden_set.py       # instant — validates + assembles the golden set
 python scripts/07_baseline_trivial.py       # instant — trivial baseline
 python scripts/08_baseline_tfidf.py         # ~10-20s — TF-IDF + LogReg baseline
 python scripts/09_build_retrieval_index.py  # ~10-20s — builds the TF-IDF retrieval index
-python -m pytest tests/ -q                  # ~10-15s — 29 tests
+python scripts/15_evaluate_escalation_tfidf.py  # ~10s — escalation policy sanity check (TF-IDF driven)
+python -m pytest tests/ -q                  # ~15-20s — 32 tests
 ```
+
+(Measured total on a laptop CPU: 9m25s for the full sequence above.)
 
 ## Reproducing results (requires OPENROUTER_API_KEY)
 
