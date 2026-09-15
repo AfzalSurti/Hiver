@@ -332,3 +332,40 @@ cleanly fit one bucket (e.g., `spotify_1997120`: financial dispute AND 3
 prior unresolved contact attempts) and had to be force-fit to the single
 most actionable category, with the secondary consideration left in the
 free-text `notes` field instead of a structured field.
+
+---
+
+### 15. LLM phases run on free-tier OpenRouter models, not the paid defaults in `.env.example`
+
+**Decision:** The actual `.env` used to produce Phase 7/9/11 results points
+`OPENROUTER_CLASSIFIER_MODEL`/`OPENROUTER_GENERATION_MODEL` at
+`nvidia/nemotron-3-super-120b-a12b:free` and `OPENROUTER_JUDGE_MODEL` at
+`dots-studio/dots-3-note-preview:free`, rather than the `gpt-4o-mini`/
+`claude-3.5-sonnet` defaults `.env.example` recommends.
+
+**Why:** The provided OpenRouter key returned `402 Insufficient credits` on
+the first real call - a billing constraint, not a code issue (confirmed by
+first testing with a trivial classification call before assuming anything
+was broken). Given the choice to wait for credits, use free models, or stop,
+free models were chosen to keep moving. Model selection was empirical, not
+assumed: `google/gemma-4-31b-it:free` was tried first (a well-known model
+family) and consistently returned `429` "temporarily rate-limited upstream"
+from OpenRouter's shared free pool on repeated attempts minutes apart, so it
+was dropped rather than built around and hoped to work during a 228-example
+batch run. `nvidia/nemotron-3-super-120b-a12b:free` and
+`dots-studio/dots-3-note-preview:free` were both smoke-tested on the actual
+classify/generate/judge code paths (not just "hello world") before being
+adopted, and specifically chosen as two different providers/model families
+for classification+generation vs. judging, preserving the anti-self-preference
+intent of decision #13 even though neither is the original paid pick.
+
+**Trade-off:** Free-tier models are less capacity-tested for structured
+output discipline and instruction-following than `gpt-4o-mini`/
+`claude-3.5-sonnet`, and are subject to shared-pool rate limiting that could
+cause `LLMConfigError`-adjacent failures mid-batch (the `call_json` retry
+logic handles malformed *output*, but a persistent 429/402 mid-run would
+still need re-running from cache - see `scripts/10-12`'s per-conversation_id
+caching, which makes a resumed re-run cheap). Reported LLM-based results
+should be read as "what these specific free models produce," not as a
+ceiling on what the architecture could achieve with the originally-intended
+paid models.

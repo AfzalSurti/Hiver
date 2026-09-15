@@ -68,37 +68,60 @@ def call_json(
 
     last_error: Exception | None = None
     for attempt in range(max_retries + 1):
+        content = None
         try:
-            response = client.chat.completions.create(
-                model=model,
-                messages=messages,
-                temperature=temperature,
-                response_format={"type": "json_object"},
-            )
-        except Exception:
-            # Some OpenRouter-routed models reject response_format; retry without it.
-            response = client.chat.completions.create(
-                model=model,
-                messages=messages,
-                temperature=temperature,
-            )
+            try:
+                response = client.chat.completions.create(
+                    model=model,
+                    messages=messages,
+                    temperature=temperature,
+                    response_format={"type": "json_object"},
+                )
+            except Exception:
+                # Some OpenRouter-routed models reject response_format; retry without it.
+                response = client.chat.completions.create(
+                    model=model,
+                    messages=messages,
+                    temperature=temperature,
+                )
 
-        content = response.choices[0].message.content or ""
-        try:
+            # OpenRouter's shared free-tier pool sometimes returns HTTP 200
+            # with an empty/malformed body when the upstream provider fails
+            # (rather than raising) - `response.choices` can be None or
+            # empty, or `message.content` can be None. This was a real bug
+            # found during development: an earlier version accessed
+            # response.choices[0].message.content unguarded, which crashed
+            # with an uncaught TypeError that bypassed the retry loop
+            # entirely and silently reported a bad result as a real
+            # classification (see docs/decision_log.md).
+            choices = getattr(response, "choices", None)
+            message = choices[0].message if choices else None
+            content = getattr(message, "content", None) if message else None
+            if not content:
+                raise ValueError(
+                    f"Empty or malformed response from the model (likely an upstream "
+                    f"provider failure returned as HTTP 200): {response!r}"
+                )
+
             parsed = _extract_json(content)
             validate(parsed)
             return parsed
         except Exception as e:  # noqa: BLE001 - deliberately broad, see retry loop
             last_error = e
-            messages.append({"role": "assistant", "content": content})
-            messages.append(
-                {
-                    "role": "user",
-                    "content": (
-                        f"Your last response was invalid ({e}). Reply with ONLY a single "
-                        "valid JSON object matching the requested schema, no other text."
-                    ),
-                }
-            )
+            if content:
+                # We got real (if invalid) model output - show it back to the
+                # model and ask it to correct itself.
+                messages.append({"role": "assistant", "content": content})
+                messages.append(
+                    {
+                        "role": "user",
+                        "content": (
+                            f"Your last response was invalid ({e}). Reply with ONLY a single "
+                            "valid JSON object matching the requested schema, no other text."
+                        ),
+                    }
+                )
+            # else: the API call itself failed/returned empty - just retry
+            # the same request fresh, nothing useful to show the model back.
 
     raise last_error  # type: ignore[misc]
