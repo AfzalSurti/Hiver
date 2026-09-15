@@ -1,0 +1,179 @@
+{
+  "accuracy": 0.6184,
+  "macro_f1": 0.6038,
+  "weighted_f1": 0.6487,
+  "per_class": {
+    "ACCOUNT_LOGIN_ACCESS": {
+      "precision": 1.0,
+      "recall": 0.7027,
+      "f1": 0.8254,
+      "support": 37
+    },
+    "PAYMENT_BILLING_ISSUE": {
+      "precision": 0.7586,
+      "recall": 1.0,
+      "f1": 0.8627,
+      "support": 22
+    },
+    "REFUND_REQUEST": {
+      "precision": 1.0,
+      "recall": 0.64,
+      "f1": 0.7805,
+      "support": 25
+    },
+    "SUBSCRIPTION_PLAN_MANAGEMENT": {
+      "precision": 0.8,
+      "recall": 0.6061,
+      "f1": 0.6897,
+      "support": 33
+    },
+    "TECHNICAL_PLAYBACK_ISSUE": {
+      "precision": 0.619,
+      "recall": 0.4483,
+      "f1": 0.52,
+      "support": 29
+    },
+    "CONTENT_CATALOG_AVAILABILITY": {
+      "precision": 1.0,
+      "recall": 0.4828,
+      "f1": 0.6512,
+      "support": 29
+    },
+    "FEATURE_REQUEST_OR_INFO": {
+      "precision": 0.4545,
+      "recall": 0.4167,
+      "f1": 0.4348,
+      "support": 24
+    },
+    "POSITIVE_FEEDBACK_OR_RESOLVED": {
+      "precision": 0.1429,
+      "recall": 0.75,
+      "f1": 0.24,
+      "support": 4
+    },
+    "OTHER_AMBIGUOUS": {
+      "precision": 0.3148,
+      "recall": 0.68,
+      "f1": 0.4304,
+      "support": 25
+    }
+  },
+  "confusion_matrix": {
+    "labels": [
+      "ACCOUNT_LOGIN_ACCESS",
+      "PAYMENT_BILLING_ISSUE",
+      "REFUND_REQUEST",
+      "SUBSCRIPTION_PLAN_MANAGEMENT",
+      "TECHNICAL_PLAYBACK_ISSUE",
+      "CONTENT_CATALOG_AVAILABILITY",
+      "FEATURE_REQUEST_OR_INFO",
+      "POSITIVE_FEEDBACK_OR_RESOLVED",
+      "OTHER_AMBIGUOUS"
+    ],
+    "matrix": [
+      [
+        26,
+        1,
+        0,
+        1,
+        2,
+        0,
+        2,
+        1,
+        4
+      ],
+      [
+        0,
+        22,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        4,
+        16,
+        2,
+        0,
+        0,
+        2,
+        0,
+        1
+      ],
+      [
+        0,
+        1,
+        0,
+        20,
+        3,
+        0,
+        1,
+        2,
+        6
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        13,
+        0,
+        4,
+        1,
+        10
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        2,
+        14,
+        2,
+        4,
+        7
+      ],
+      [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        10,
+        5,
+        8
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        5,
+        17
+      ]
+    ]
+  },
+  "n_examples": 228,
+  "baseline_name": "tfidf_logreg_weak_labels",
+  "train_size": 10561,
+  "train_label_source": "heuristic_weak_labels (scripts/04)"
+}

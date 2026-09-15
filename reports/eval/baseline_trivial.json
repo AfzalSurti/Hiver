@@ -1,0 +1,178 @@
+{
+  "accuracy": 0.1096,
+  "macro_f1": 0.022,
+  "weighted_f1": 0.0217,
+  "per_class": {
+    "ACCOUNT_LOGIN_ACCESS": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 37
+    },
+    "PAYMENT_BILLING_ISSUE": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 22
+    },
+    "REFUND_REQUEST": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 25
+    },
+    "SUBSCRIPTION_PLAN_MANAGEMENT": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 33
+    },
+    "TECHNICAL_PLAYBACK_ISSUE": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 29
+    },
+    "CONTENT_CATALOG_AVAILABILITY": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 29
+    },
+    "FEATURE_REQUEST_OR_INFO": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 24
+    },
+    "POSITIVE_FEEDBACK_OR_RESOLVED": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 4
+    },
+    "OTHER_AMBIGUOUS": {
+      "precision": 0.1096,
+      "recall": 1.0,
+      "f1": 0.1976,
+      "support": 25
+    }
+  },
+  "confusion_matrix": {
+    "labels": [
+      "ACCOUNT_LOGIN_ACCESS",
+      "PAYMENT_BILLING_ISSUE",
+      "REFUND_REQUEST",
+      "SUBSCRIPTION_PLAN_MANAGEMENT",
+      "TECHNICAL_PLAYBACK_ISSUE",
+      "CONTENT_CATALOG_AVAILABILITY",
+      "FEATURE_REQUEST_OR_INFO",
+      "POSITIVE_FEEDBACK_OR_RESOLVED",
+      "OTHER_AMBIGUOUS"
+    ],
+    "matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        37
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        22
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        25
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        33
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        29
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        29
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        24
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        25
+      ]
+    ]
+  },
+  "n_examples": 228,
+  "baseline_name": "trivial_majority_class",
+  "majority_intent": "OTHER_AMBIGUOUS"
+}
