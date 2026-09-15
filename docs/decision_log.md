@@ -180,3 +180,54 @@ baseline's ceiling, discussed in `REPORT.md`).
 **Trade-off:** The TF-IDF baseline's training data is noisy by construction;
 its numbers should be read as "TF-IDF given cheap heuristic labels," not
 "TF-IDF's true ceiling given clean labels."
+
+---
+
+### 9. Retrieval uses TF-IDF cosine similarity, not neural sentence embeddings
+
+**Decision:** `src/support_agent/retrieval.py` retrieves historical
+resolutions via TF-IDF vectors + cosine similarity, not
+sentence-transformers embeddings, despite the brief's "preferred" approach
+being embeddings + vector similarity.
+
+**Why:** Importing `sentence_transformers` in this environment crashed the
+Python process outright with a Windows fastfail (`0xC0000409`, a
+heap-corruption abort) - confirmed by bisecting imports (`torch`,
+`transformers`, `tokenizers`, `huggingface_hub` all import fine
+individually; the crash only occurs once `sentence_transformers` itself is
+imported), most likely a numpy 2.x ABI mismatch with an older compiled
+dependency several layers down. Fixing this would mean upgrading/downgrading
+packages in the user's shared conda environment, risking breakage in
+unrelated projects that also depend on it - too large a blast radius for a
+retrieval-quality improvement. TF-IDF vectors are themselves a form of
+(sparse) embedding, and cosine similarity over them is a standard,
+well-understood retrieval baseline, already proven stable in this
+environment via the Phase 6 classifier.
+
+**Trade-off:** TF-IDF is purely lexical (keyword-overlap) and misses
+semantic paraphrases a neural embedding would catch (e.g. "I can't sign in"
+vs. "login isn't working" share no distinctive n-grams). This is a real
+retrieval-quality ceiling, called out again in `REPORT.md`'s failure
+analysis and "one more week" section as the highest-leverage fix.
+
+---
+
+### 10. Escalation policy signals and thresholds are explicit and inspectable, not learned
+
+**Decision:** `src/support_agent/escalation.py` implements escalation as a
+small set of explicit, ordered rules (risk keywords > always-escalate
+intents > confidence threshold > retrieval-evidence threshold) rather than a
+learned classifier trained on the golden set's `expected_action` labels.
+
+**Why:** The brief asks for the escalation policy to be "inspectable and
+explainable." A learned model over 228 examples would also almost certainly
+overfit, and - more importantly - would offer no way to state *why* a given
+message escalated beyond "the model said so," which defeats the purpose of
+an escalation reason. Explicit rules mean every decision traces to exactly
+one named signal (see the `signals` dict returned by `decide()`).
+
+**Trade-off:** Thresholds (confidence floor, minimum retrieval similarity)
+are set from reasoning about the problem and the TF-IDF similarity scale,
+not fit to data, since the real classifier's confidence distribution isn't
+known until Phase 7 runs against a live LLM. They are explicitly flagged in
+the module docstring as pending calibration, not claimed as optimal.
